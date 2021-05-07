@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LiteCommerce.DomainModels;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace LiteCommerce.DataLayers.SQLServer
 {
@@ -47,7 +49,7 @@ namespace LiteCommerce.DataLayers.SQLServer
 
         public int Count(int categoryId, int supplierId, string searchValue)
         {
-            throw new NotImplementedException();
+            return 100;
         }
 
         /// <summary>
@@ -124,7 +126,53 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public List<Product> List(int Page, int PageSize, int CategoryId, int SupplierId, string searchValue)
         {
-            throw new NotImplementedException();
+            if (searchValue != "")
+            {
+                searchValue = "%" + searchValue + "%";
+            }
+            List<Product> data = new List<Product>();
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = cn; 
+                cmd.CommandText = @"SELECT  *
+                                    FROM
+                                    (
+                                        SELECT  *, ROW_NUMBER() OVER(ORDER BY ProductName) AS RowNumber
+                                        FROM    Products 
+                                        WHERE   (@categoryId = 0 OR CategoryId = @categoryId)
+                                        AND  (@supplierId = 0 OR SupplierId = @supplierId)
+                                            AND (@searchValue = '' OR ProductName LIKE @searchValue)
+                                    ) AS s
+                                    WHERE s.RowNumber BETWEEN (@page - 1)*@pageSize + 1 AND @page*@pageSize";
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@Page", Page);
+                cmd.Parameters.AddWithValue("@PageSize", PageSize);
+                cmd.Parameters.AddWithValue("@CategoryId", CategoryId);
+                cmd.Parameters.AddWithValue("@SupplierId", SupplierId);
+                cmd.Parameters.AddWithValue("@searchValue", searchValue);
+                using(SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    while (dbReader.Read())
+                    {
+                        data.Add(new Product()
+                        {
+                            ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                            CategoryID = Convert.ToInt32(dbReader["CategoryID"]),
+                            Price = Convert.ToDecimal(dbReader["Price"]),
+                            ProductName = Convert.ToString(dbReader["ProductName"]),
+                            Photo = Convert.ToString(dbReader["Photo"]),
+                            SupplierID = Convert.ToInt32(dbReader["SupplierID"]),
+                            Unit = Convert.ToString(dbReader["Unit"]), 
+                        });
+                    }
+                }
+
+                cn.Close();
+            }
+
+            return data;
+
         }
         /// <summary>
         /// 
