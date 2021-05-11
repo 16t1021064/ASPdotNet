@@ -9,7 +9,7 @@ using System.Data;
 
 namespace LiteCommerce.DataLayers.SQLServer
 {
-    public class ProductDAL : _BaseDAL , IProductDAL
+    public class ProductDAL : _BaseDAL, IProductDAL
     {
         /// <summary>
         /// 
@@ -26,7 +26,26 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public int Add(Product data)
         {
-            throw new NotImplementedException();
+            int productID = 0;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"insert into Products(
+	                                ProductName, SupplierID, CategoryID, Unit, Price, Photo
+                                    ) values(
+	                                @ProductName, @SupplierID, @CategoryID, @Unit, @Price, @Photo
+                                             );
+                                Select @@IDENTITY;";
+                cmd.Parameters.AddWithValue("@ProductName", data.ProductName);
+                cmd.Parameters.AddWithValue("@SupplierID", data.SupplierID);
+                cmd.Parameters.AddWithValue("@CategoryID", data.CategoryID);
+                cmd.Parameters.AddWithValue("@City", data.Unit);
+                cmd.Parameters.AddWithValue("@Price", data.Price);
+                cmd.Parameters.AddWithValue("@Photo", data.Photo);
+                productID = Convert.ToInt32(cmd.ExecuteScalar());
+                cn.Close();
+            }
+            return productID;
         }
         /// <summary>
         /// 
@@ -35,7 +54,25 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public long AddAttribute(ProductAttribute data)
         {
-            throw new NotImplementedException();
+            int attributeID = 0;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"insert into ProductAttributes(
+	                                AttributeName, AttributeValue, AttributeValue, DisplayOrder 
+                                    ) values(
+	                                @AttributeName, @AttributeValue, @AttributeValue, @DisplayOrder
+                                             );
+                                Select @@IDENTITY;";
+                cmd.Parameters.AddWithValue("@AttributeName", data.AttributeName);
+                cmd.Parameters.AddWithValue("@ProductID", data.ProductID);
+                cmd.Parameters.AddWithValue("@AttributeValue", data.AttributeValue);
+                cmd.Parameters.AddWithValue("@DisplayOrder", data.DisplayOrder);
+                attributeID = Convert.ToInt32(cmd.ExecuteScalar());
+                cn.Close();
+            }
+
+            return attributeID;
         }
         /// <summary>
         /// 
@@ -44,12 +81,53 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public long AddGallery(ProductGallery data)
         {
-            throw new NotImplementedException();
+            int galleryID = 0;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"insert into ProductGallery(
+	                                ProductID, Photo, Description, DisplayOrder, IsHidden
+                                    ) values(
+	                                @ProductID, @Photo, @Description, @DisplayOrder, @IsHidden
+                                             );
+                                Select @@IDENTITY;";
+                cmd.Parameters.AddWithValue("@ProductID", data.ProductID);
+                cmd.Parameters.AddWithValue("@Photo", data.Photo);
+                cmd.Parameters.AddWithValue("@Description", data.Description);
+                cmd.Parameters.AddWithValue("@DisplayOrder", data.DisplayOrder);
+                cmd.Parameters.AddWithValue("@IsHidden", data.IsHidden);
+                galleryID = Convert.ToInt32(cmd.ExecuteScalar());
+                cn.Close();
+            }
+            return galleryID;
         }
 
         public int Count(int categoryId, int supplierId, string searchValue)
         {
-            return 100;
+            int count = 0;
+            if (searchValue != "")
+            {
+                searchValue = "%" + searchValue + "%";
+            }
+            int result = 0;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"Select count(*) from Products
+                                        where (@searchValue= '')
+		                                    or(
+			                                    CategoryID like @categoryId
+			                                    or SupplierID like @supplierId
+                                                or ProductName like @searchValue
+                                                or Unit like @searchValue
+			                                    )";
+                cmd.Parameters.AddWithValue("@searchValue", searchValue);
+                cmd.Parameters.AddWithValue("@supplierId", supplierId);
+                cmd.Parameters.AddWithValue("@categoryId", categoryId);
+                result = Convert.ToInt32(cmd.ExecuteScalar());
+                cn.Close();
+            }
+            return count;
         }
 
         /// <summary>
@@ -59,7 +137,21 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public bool Delete(int productId)
         {
-            throw new NotImplementedException();
+            bool isDeleted = false;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"delete from Products
+                                    where ProductID = @productId
+	                                    AND not exists(
+	                                    select * from OrderDetails
+		                                    where ProductID = Products.ProductID
+	                                    )";
+                cmd.Parameters.AddWithValue("@productId", productId);
+                isDeleted = cmd.ExecuteNonQuery() > 0;
+                cn.Close();
+            }
+            return isDeleted;
         }
         /// <summary>
         /// 
@@ -68,7 +160,17 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public bool DeleteAttribute(long attributeId)
         {
-            throw new NotImplementedException();
+            bool isDeleted = false;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"delete from ProductAttributes
+                                    where AttributeID = @attributeId";
+                cmd.Parameters.AddWithValue("@attributeId", attributeId);
+                isDeleted = cmd.ExecuteNonQuery() > 0;
+                cn.Close();
+            }
+            return isDeleted;
         }
         /// <summary>
         /// 
@@ -77,7 +179,17 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public bool DeleteGallery(long galleryId)
         {
-            throw new NotImplementedException();
+            bool isDeleted = false;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"delete from ProductGallery
+                                    where GalleryID = @galleryId";
+                cmd.Parameters.AddWithValue("@galleryId", galleryId);
+                isDeleted = cmd.ExecuteNonQuery() > 0;
+                cn.Close();
+            }
+            return isDeleted;
         }
         /// <summary>
         /// 
@@ -86,7 +198,31 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public Product Get(int productId)
         {
-            throw new NotImplementedException();
+            Product data = null;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"Select * from Products where ProductID = @productId";
+                cmd.Parameters.AddWithValue("@productId", productId);
+                using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    if (dbReader.Read())
+                    {
+                        data = new Product()
+                        {
+                            ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                            ProductName = Convert.ToString(dbReader["ProductName"]),
+                            SupplierID = Convert.ToInt32(dbReader["SupplierID"]),
+                            CategoryID = Convert.ToInt32(dbReader["CategoryID"]),
+                            Unit = Convert.ToString(dbReader["Unit"]),
+                            Price = Convert.ToDecimal(dbReader["Price"]),
+                            Photo = Convert.ToString(dbReader["Photo"])
+                        };
+                    }
+                }
+                cn.Close();
+            }
+            return data;
         }
         /// <summary>
         /// 
@@ -95,7 +231,29 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public ProductAttribute GetAttribute(long attributeId)
         {
-            throw new NotImplementedException();
+            ProductAttribute data = null;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"Select * from ProductAttributes where AttributeID = @attributeId";
+                cmd.Parameters.AddWithValue("@attributeId", attributeId);
+                using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    if (dbReader.Read())
+                    {
+                        data = new ProductAttribute()
+                        {
+                            AttributeID = Convert.ToInt32(dbReader["AttributeID"]),
+                            ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                            AttributeName = Convert.ToString(dbReader["AttributeName"]),
+                            AttributeValue = Convert.ToString(dbReader["AttributeValue"]),
+                            DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"])
+                        };
+                    }
+                }
+                cn.Close();
+            }
+            return data;
         }
         /// <summary>
         /// 
@@ -104,7 +262,57 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public ProductEx GetEx(int productId)
         {
-            throw new NotImplementedException();
+            ProductEx data = null;
+            List<ProductAttribute> listOfAttribute = new List<ProductAttribute>();
+            List<ProductGallery> listOfGallery = new List<ProductGallery>();
+            ProductAttribute attribute = null;
+            ProductGallery gallery = null;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"Select * from ProductGallery where ProductID = @productId";
+                cmd.Parameters.AddWithValue("@productId", productId);
+                using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    while (dbReader.Read())
+                    {
+                        gallery = new ProductGallery()
+                        {
+                            GalleryID = Convert.ToInt32(dbReader["GalleryID"]),
+                            ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                            Photo = Convert.ToString(dbReader["Photo"]),
+                            Description = Convert.ToString(dbReader["Description"]),
+                            DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"]),
+                            IsHidden = Convert.ToBoolean(dbReader["IsHidden"])
+                        };
+                        listOfGallery.Add(gallery);
+                    }
+                }
+            }
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"Select * from ProductAttributes where ProductID = @productId";
+                cmd.Parameters.AddWithValue("@productId", productId);
+                using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    while (dbReader.Read())
+                    {
+                        attribute = new ProductAttribute()
+                        {
+                            AttributeID = Convert.ToInt32(dbReader["AttributeID"]),
+                            ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                            AttributeName = Convert.ToString(dbReader["AttributeName"]),
+                            AttributeValue = Convert.ToString(dbReader["AttributeValue"]),
+                            DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"])
+                        };
+                        listOfAttribute.Add(attribute);
+                    }
+                }
+            }
+            data.Attributes = listOfAttribute;
+            data.Galleries = listOfGallery;
+            return data;
         }
         /// <summary>
         /// 
@@ -113,7 +321,29 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public ProductGallery GetGallery(long galleryId)
         {
-            throw new NotImplementedException();
+            ProductGallery data = null;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"Select * from ProductGallery where GalleryID = @galleryId";
+                cmd.Parameters.AddWithValue("@galleryId", galleryId);
+                using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    if (dbReader.Read())
+                    {
+                        data = new ProductGallery()
+                        {
+                            GalleryID = Convert.ToInt32(dbReader["GalleryID"]),
+                            ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                            Photo = Convert.ToString(dbReader["Photo"]),
+                            Description = Convert.ToString(dbReader["Description"]),
+                            DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"]),
+                            IsHidden = Convert.ToBoolean(dbReader["IsHidden"])
+                        };
+                    }
+                }
+            }
+            return data;
         }
         /// <summary>
         /// 
@@ -134,7 +364,7 @@ namespace LiteCommerce.DataLayers.SQLServer
             using (SqlConnection cn = GetConnection())
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = cn; 
+                cmd.Connection = cn;
                 cmd.CommandText = @"SELECT  *
                                     FROM
                                     (
@@ -151,7 +381,7 @@ namespace LiteCommerce.DataLayers.SQLServer
                 cmd.Parameters.AddWithValue("@CategoryId", CategoryId);
                 cmd.Parameters.AddWithValue("@SupplierId", SupplierId);
                 cmd.Parameters.AddWithValue("@searchValue", searchValue);
-                using(SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
                 {
                     while (dbReader.Read())
                     {
@@ -163,7 +393,7 @@ namespace LiteCommerce.DataLayers.SQLServer
                             ProductName = Convert.ToString(dbReader["ProductName"]),
                             Photo = Convert.ToString(dbReader["Photo"]),
                             SupplierID = Convert.ToInt32(dbReader["SupplierID"]),
-                            Unit = Convert.ToString(dbReader["Unit"]), 
+                            Unit = Convert.ToString(dbReader["Unit"]),
                         });
                     }
                 }
@@ -174,6 +404,7 @@ namespace LiteCommerce.DataLayers.SQLServer
             return data;
 
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -181,7 +412,33 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public List<ProductAttribute> ListAttributes(int productId)
         {
-            throw new NotImplementedException();
+            List<ProductAttribute> data = new List<ProductAttribute>();
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = cn;
+                cmd.CommandText = @"SELECT  *
+                                    FROM ProductAttribute 
+                                    where ProductID = @productId";
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@productId", productId);
+                using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    while (dbReader.Read())
+                    {
+                        data.Add(new ProductAttribute()
+                        {
+                            AttributeID = Convert.ToInt32(dbReader["AttributeID"]),
+                            ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                            AttributeName = Convert.ToString(dbReader["AttributeName"]),
+                            AttributeValue = Convert.ToString(dbReader["AttributeValue"]),
+                            DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"])
+                        });
+                    }
+                }
+                cn.Close();
+            }
+            return data;
         }
         /// <summary>
         /// 
@@ -190,7 +447,34 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public List<ProductGallery> ListGalleries(int productId)
         {
-            throw new NotImplementedException();
+            List<ProductGallery> data = new List<ProductGallery>();
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = cn;
+                cmd.CommandText = @"SELECT  *
+                                    FROM ProductGallery 
+                                    where ProductID = @productId";
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@productId", productId);
+                using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    while (dbReader.Read())
+                    {
+                        data.Add(new ProductGallery()
+                        {
+                            GalleryID = Convert.ToInt32(dbReader["GalleryID"]),
+                            ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                            Photo = Convert.ToString(dbReader["Photo"]),
+                            Description = Convert.ToString(dbReader["Description"]),
+                            DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"]),
+                            IsHidden = Convert.ToBoolean(dbReader["IsHidden"])
+                        });
+                    }
+                }
+                cn.Close();
+            }
+            return data;
         }
         /// <summary>
         /// 
@@ -199,7 +483,29 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public bool Update(Product data)
         {
-            throw new NotImplementedException();
+            bool isUpdated = false;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"Update Products
+                                    set ProductName = @ProductName,
+	                                    SupplierID	=@SupplierID,
+	                                    CategoryID =@CategoryID,
+	                                    Unit = @Unit,
+	                                    Price = @Price,
+	                                    Photo = @Photo,
+	                                    Where ProductID = @ProductID
+	                                    ";
+                cmd.Parameters.AddWithValue("@ProductName", data.ProductName);
+                cmd.Parameters.AddWithValue("@SupplierID", data.SupplierID);
+                cmd.Parameters.AddWithValue("@CategoryID", data.CategoryID);
+                cmd.Parameters.AddWithValue("@Unit", data.Unit);
+                cmd.Parameters.AddWithValue("@Price", data.Price);
+                cmd.Parameters.AddWithValue("@Phone", data.Photo);
+                cmd.Parameters.AddWithValue("@ProductID", data.ProductID);
+                isUpdated = cmd.ExecuteNonQuery() > 0;
+            }
+            return isUpdated;
         }
         /// <summary>
         /// 
@@ -208,7 +514,25 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public bool UpdateAttribute(ProductAttribute data)
         {
-            throw new NotImplementedException();
+            bool isUpdated = false;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"Update ProductAttributes
+                                    set ProductID = @ProductID,
+	                                    AttributeName	=@AttributeName,
+	                                    AttributeValue =@AttributeValue,
+	                                    DisplayOrder = @DisplayOrder,
+	                                    Where AttributeID = @AttributeID
+	                                    ";
+                cmd.Parameters.AddWithValue("@ProductID", data.ProductID);
+                cmd.Parameters.AddWithValue("@AttributeName", data.AttributeName);
+                cmd.Parameters.AddWithValue("@AttributeValue", data.AttributeValue);
+                cmd.Parameters.AddWithValue("@DisplayOrder", data.DisplayOrder);
+                cmd.Parameters.AddWithValue("@AttributeID", data.AttributeID);
+                isUpdated = cmd.ExecuteNonQuery() > 0;
+            }
+            return isUpdated;
         }
         /// <summary>
         /// 
@@ -217,7 +541,27 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>     
         public bool UpdateGallery(ProductGallery data)
         {
-            throw new NotImplementedException();
+            bool isUpdated = false;
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = cn.CreateCommand();
+                cmd.CommandText = @"Update ProductGallery
+                                    set ProductID = @ProductID,
+	                                    Photo	=@Photo,
+	                                    Description =@Description,
+	                                    DisplayOrder = @DisplayOrder,
+                                        IsHidden = @IsHidden,
+	                                    Where GalleryID = @GalleryID
+	                                    ";
+                cmd.Parameters.AddWithValue("@ProductID", data.ProductID);
+                cmd.Parameters.AddWithValue("@Photo", data.Photo);
+                cmd.Parameters.AddWithValue("@Description", data.Description);
+                cmd.Parameters.AddWithValue("@DisplayOrder", data.DisplayOrder);
+                cmd.Parameters.AddWithValue("@AttributeID", data.IsHidden);
+                cmd.Parameters.AddWithValue("@GalleryID", data.GalleryID);
+                isUpdated = cmd.ExecuteNonQuery() > 0;
+            }
+            return isUpdated;
         }
     }
 }
