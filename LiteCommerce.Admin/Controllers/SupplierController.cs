@@ -12,19 +12,12 @@ namespace LiteCommerce.Admin.Controllers
     {
         [Authorize]
         // GET: Supplier
-        public ActionResult Index(int page = 1, string searchValue = "")
+        public ActionResult Index()
         {
-            //int rowCount = 0;
-            //int pageSize = 10;
-            //var listOfSuppliers = DataService.ListSuppliers(page, 10, searchValue, out rowCount);
-            //int pageCount = rowCount / pageSize;
-            //if(rowCount % pageSize > 0)
-            //    pageCount += 1;
-            //ViewBag.Page = page;
-            //ViewBag.RowCount = rowCount;
-            //ViewBag.PageCount = pageCount;
-            //ViewBag.SearchValue = searchValue;
-            //return View(listOfSuppliers);
+            return View();
+        }
+        public ActionResult List(int page = 1, string searchValue = "")
+        {
             int rowCount = 0;
             int pageSize = 10;
             var listOfSuppliers = DataService.ListSuppliers(page, pageSize, searchValue, out rowCount);

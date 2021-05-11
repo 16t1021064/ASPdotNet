@@ -24,12 +24,12 @@ namespace LiteCommerce.Admin.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult List(int category = 0, int supplier = 0, string searchValue ="", int page =1)
+        public ActionResult List(int categoryId = 0, int supplierId = 0, string searchValue ="", int page =1)
         {
            
                 int rowCount = 0;
                 int pageSize = 10;
-                var model = ProductService.List(page, pageSize, category, supplier, searchValue, out rowCount);
+                var model = ProductService.List(page, pageSize, categoryId, supplierId, searchValue, out rowCount);
                 ViewBag.RowCount = rowCount;
                 ViewBag.Page = page;
                 int pageCount = rowCount / pageSize;

@@ -104,7 +104,6 @@ namespace LiteCommerce.DataLayers.SQLServer
 
         public int Count(int categoryId, int supplierId, string searchValue)
         {
-            int count = 0;
             if (searchValue != "")
             {
                 searchValue = "%" + searchValue + "%";
@@ -127,7 +126,7 @@ namespace LiteCommerce.DataLayers.SQLServer
                 result = Convert.ToInt32(cmd.ExecuteScalar());
                 cn.Close();
             }
-            return count;
+            return result;
         }
 
         /// <summary>

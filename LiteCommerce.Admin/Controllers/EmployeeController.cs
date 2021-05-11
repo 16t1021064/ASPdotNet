@@ -86,16 +86,15 @@ namespace LiteCommerce.Admin.Controllers
                         ViewBag.Title = "Sửa thông tin anh nhân viên";
                     return View("Edit", data);
                 }
-                return Json(data);
-                //if (data.EmployeeID == 0)
-                //{
-                //    DataService.AddEmployee(data);
-                //}
-                //else
-                //{
-                //    DataService.UpdateEmployee(data);
-                //}
-                //return RedirectToAction("Index");
+                if (data.EmployeeID == 0)
+                {
+                    DataService.AddEmployee(data);
+                }
+                else
+                {
+                    DataService.UpdateEmployee(data);
+                }
+                return RedirectToAction("Index");
             }
             catch (Exception e)
             {
