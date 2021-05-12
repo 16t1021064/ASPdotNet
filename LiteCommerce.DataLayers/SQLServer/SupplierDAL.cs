@@ -155,7 +155,8 @@ namespace LiteCommerce.DataLayers.SQLServer
 	                                    from Suppliers
 	                                    where (@searchValue= '')
 		                                    or(
-			                                    SupplierID Like @searchValue
+			                                    SupplierID Like @searchValue    
+                                                or SupplierName like @searchValue
 			                                    or ContactName like @searchValue
 			                                    or Address like @searchValue
 			                                    or Phone like @searchValue

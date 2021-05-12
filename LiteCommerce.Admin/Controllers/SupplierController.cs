@@ -13,7 +13,7 @@ namespace LiteCommerce.Admin.Controllers
         [Authorize]
         // GET: Supplier
         public ActionResult Index()
-        {
+        {   
             return View();
         }
         public ActionResult List(int page = 1, string searchValue = "")

@@ -26,18 +26,21 @@ namespace LiteCommerce.Admin.Controllers
         /// <returns></returns>
         public ActionResult List(int categoryId = 0, int supplierId = 0, string searchValue ="", int page =1)
         {
-           
-                int rowCount = 0;
-                int pageSize = 10;
-                var model = ProductService.List(page, pageSize, categoryId, supplierId, searchValue, out rowCount);
-                ViewBag.RowCount = rowCount;
-                ViewBag.Page = page;
-                int pageCount = rowCount / pageSize;
-                if (rowCount % pageSize > 0)
-                    pageCount++;
-                ViewBag.PageCount = pageCount;
-                return View(model);
-            
+
+            int rowCount = 0;
+            int pageSize = 10;
+            var listOfProducts = ProductService.List(page, pageSize, categoryId, supplierId, searchValue, out rowCount);
+            Models.ProductPaginationQueryResult model = new Models.ProductPaginationQueryResult()
+            {
+                Page = page,
+                PageSize = pageSize,
+                CategoryID = categoryId,
+                SupplierID = supplierId,
+                SearchValue = searchValue,
+                RowCount = rowCount,
+                Data = listOfProducts,
+            };
+            return View(model);
         }
     }
 }

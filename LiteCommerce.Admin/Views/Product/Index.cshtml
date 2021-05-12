@@ -6,14 +6,14 @@
     <form id="formSearchInput">
         <div class="row">
             <div class="col-md-6">
-                <select name="category" class="form-control">
+                <select name="category" id="category" class="form-control">
                     <option value="0">-- Tất cả loại hàng --</option>
                     <option value="1">Beverages</option>
                     <option value="2">Condiments</option>
                 </select>
             </div>
             <div class="col-md-6">
-                <select name="supplier" class="form-control">
+                <select name="supplier" id="supplier" class="form-control">
                     <option value="0">-- Tất cả nhà cung cấp --</option>
                     <option value="1">Exotic Liquid</option>
                     <option value="2">New Orleans Cajun Delights</option>
@@ -43,7 +43,11 @@
     <script>
         function getProducts(page) {
             var searchCondition = $("#formSearchInput").serializeArray();
-            searchCondition.push({name: "page", value: page });
+            searchCondition.push({ name: "page", value: page });
+            searchCondition.push({
+                name: "Supplier ID",
+                value: $('.SelectSupplierIDName').val(),
+            });
             $.ajax({
                 url: "/Product/List",
                 type: "POST",

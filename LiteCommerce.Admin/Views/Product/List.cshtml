@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LiteCommerce.DomainModels.Product>
+﻿@model LiteCommerce.Admin.Models.ProductPaginationQueryResult
 
 @{
     Layout = null;
@@ -6,9 +6,9 @@
 
 <div class="text-left">
     <p>
-        Có tất cả <strong>@ViewBag.RowCount</strong> mặt hàng.
-        Bạn đang ở trang <strong>@ViewBag.Page</strong>
-        trên tổng số <strong>@ViewBag.PageCount</strong> trang.
+        Có tất cả <strong>@Model.RowCount</strong> mặt hàng.
+        Bạn đang ở trang <strong>@Model.Page</strong>
+        trên tổng số <strong>@Model.PageCount</strong> trang.
     </p>
 </div>
 
@@ -23,7 +23,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Data)
         {
             <tr>
                 <td>
@@ -45,9 +45,9 @@
 
 <div class="text-center">
     <ul class="pagination">
-        @for (int page = 1; page <= ViewBag.PageCount; page++)
+        @for (int page = 1; page <= Model.PageCount; page++)
         {
-            if (page == ViewBag.Page)
+            if (page == Model.Page)
             {
                 <li class="active"><a href="javascript:;">@page</a></li>
             }
