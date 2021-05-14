@@ -14,7 +14,11 @@ namespace LiteCommerce.Admin.Controllers
     public class EmployeeController : Controller
     {
         // GET: Employee
-        public ActionResult Index(int page = 1, string searchValue = "")
+        public ActionResult Index()
+        {
+            return View();
+        }
+        public ActionResult List(int page = 1, string searchValue = "")
         {
             int rowCount = 0;
             int pageSize = 10;
@@ -41,7 +45,7 @@ namespace LiteCommerce.Admin.Controllers
         public ActionResult Edit(int id)
         {
             ViewBag.title = "Sửa thông tin anh nhân viên";
-            var model = DataService.GetShipper(id);
+            var model = DataService.GetEmployee(id);
             if (model == null)
                 RedirectToAction("Index");
             return View(model);
@@ -58,10 +62,7 @@ namespace LiteCommerce.Admin.Controllers
                 {
                     ModelState.AddModelError("LastName", "Vui lòng họ anh nhân viên");
                 }
-                if (data.BirthDate == null)
-                {
-                    data.BirthDate = new DateTime();
-                }
+                
                 if (string.IsNullOrEmpty(data.Photo))
                 {
                     data.Photo = "";

@@ -45,8 +45,12 @@
             var searchCondition = $("#formSearchInput").serializeArray();
             searchCondition.push({ name: "page", value: page });
             searchCondition.push({
-                name: "Supplier ID",
-                value: $('.SelectSupplierIDName').val(),
+                name: "SupplierID",
+                value: $("#supplier").val(),
+            });
+            searchCondition.push({
+                name: "CategoryID",
+                value: $("#category").val(),
             });
             $.ajax({
                 url: "/Product/List",

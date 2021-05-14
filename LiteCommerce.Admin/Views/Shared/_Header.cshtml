@@ -38,24 +38,17 @@
                         }
                     }
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        @if (!"".Equals(Session["photoLink"]) && Session["photoLink"]!=null)
-                        {
                             <img src="@Session["photoLink"]" class="user-image" alt="User Image">
                             <span class="hidden-xs">@account.FullName</span>
-                        }
                         
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                            @if(!"".Equals(Session["photoLink"]) && Session["photoLink"] != null)
-                            {
                                 <img src="@Session["photoLink"]" class="img-circle" alt="User Image">
                                 <p>
                                     <span class="hidden-xs">@account.FullName</span>
                                 </p>
-                            };
-                           
                         </li>
                         <!-- Menu Body -->
                         <li class="user-body">
@@ -75,7 +68,7 @@
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                <a href="~/Account/ChangePassword" class="btn btn-default btn-flat">Change Password</a>
                             </div>
                             <div class="pull-right">
                                 <a href="~/Account/Logout" class="btn btn-default btn-flat">Sign out</a>

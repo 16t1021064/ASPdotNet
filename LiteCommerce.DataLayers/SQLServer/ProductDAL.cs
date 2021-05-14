@@ -112,14 +112,11 @@ namespace LiteCommerce.DataLayers.SQLServer
             using (SqlConnection cn = GetConnection())
             {
                 SqlCommand cmd = cn.CreateCommand();
-                cmd.CommandText = @"Select count(*) from Products
-                                        where (@searchValue= '')
-		                                    or(
-			                                    CategoryID like @categoryId
-			                                    or SupplierID like @supplierId
-                                                or ProductName like @searchValue
-                                                or Unit like @searchValue
-			                                    )";
+                cmd.CommandText = @"SELECT  count(*)
+                                        FROM    Products 
+                                        WHERE   (@categoryId = 0 OR CategoryId = @categoryId)
+                                        AND  (@supplierId = 0 OR SupplierId = @supplierId)
+                                            AND (@searchValue = '' OR ProductName LIKE @searchValue)";
                 cmd.Parameters.AddWithValue("@searchValue", searchValue);
                 cmd.Parameters.AddWithValue("@supplierId", supplierId);
                 cmd.Parameters.AddWithValue("@categoryId", categoryId);

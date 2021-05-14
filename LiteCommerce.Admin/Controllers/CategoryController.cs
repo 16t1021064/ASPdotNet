@@ -14,6 +14,10 @@ namespace LiteCommerce.Admin.Controllers
         // GET: Category
         public ActionResult Index(int page = 1, string searchValue = "")
         {
+            return View();
+        }
+        public ActionResult List(int page = 1, string searchValue = "")
+        {
             int rowCount = 0;
             int pageSize = 10;
             var listOfCategories = DataService.ListCategories(page, 10, searchValue, out rowCount);

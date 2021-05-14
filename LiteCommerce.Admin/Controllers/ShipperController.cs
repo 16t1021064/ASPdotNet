@@ -12,7 +12,11 @@ namespace LiteCommerce.Admin.Controllers
     {
         [Authorize]
         // GET: Shipper
-        public ActionResult Index(int page = 1, string searchValue = "")
+        public ActionResult Index()
+        {
+            return View();
+        }
+        public ActionResult List(int page = 1, string searchValue = "")
         {
             int rowCount = 0;
             int pageSize = 10;
