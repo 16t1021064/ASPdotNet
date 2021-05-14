@@ -12,7 +12,7 @@ namespace LiteCommerce.Admin.Controllers
     public class CategoryController : Controller
     {
         // GET: Category
-        public ActionResult Index(int page = 1, string searchValue = "")
+        public ActionResult Index()
         {
             return View();
         }

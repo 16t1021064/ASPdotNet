@@ -42,5 +42,31 @@ namespace LiteCommerce.Admin.Controllers
             };
             return View(model);
         }
+        public ActionResult Edit(int id)
+        {
+            var model = ProductService.GetEx(id);
+            if (model == null)
+                return RedirectToAction("Index");
+            return View(model);
+
+        }
+        public ActionResult DeleteAttributes(int id, long[] attributeIds )
+        {
+            if (attributeIds == null)
+            {
+                return RedirectToAction("Edit", new { id = id });
+            }
+            ProductService.DeleteAttributes(attributeIds);
+            return RedirectToAction("Edit", new { id = id });
+        }
+        public ActionResult DeleteGalleries(int id, long[] galleryIds)
+        {
+            if (galleryIds == null)
+            {
+                return RedirectToAction("Edit", new { id = id });
+            }
+            ProductService.DeleteGallery(galleryIds);
+            return RedirectToAction("Edit", new { id = id });
+        }
     }
 }

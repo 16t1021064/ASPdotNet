@@ -258,11 +258,9 @@ namespace LiteCommerce.DataLayers.SQLServer
         /// <returns></returns>
         public ProductEx GetEx(int productId)
         {
-            ProductEx data = null;
+            ProductEx data = new ProductEx();
             List<ProductAttribute> listOfAttribute = new List<ProductAttribute>();
             List<ProductGallery> listOfGallery = new List<ProductGallery>();
-            ProductAttribute attribute = null;
-            ProductGallery gallery = null;
             using (SqlConnection cn = GetConnection())
             {
                 SqlCommand cmd = cn.CreateCommand();
@@ -272,7 +270,7 @@ namespace LiteCommerce.DataLayers.SQLServer
                 {
                     while (dbReader.Read())
                     {
-                        gallery = new ProductGallery()
+                        listOfGallery.Add(new ProductGallery()
                         {
                             GalleryID = Convert.ToInt32(dbReader["GalleryID"]),
                             ProductID = Convert.ToInt32(dbReader["ProductID"]),
@@ -280,11 +278,13 @@ namespace LiteCommerce.DataLayers.SQLServer
                             Description = Convert.ToString(dbReader["Description"]),
                             DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"]),
                             IsHidden = Convert.ToBoolean(dbReader["IsHidden"])
-                        };
-                        listOfGallery.Add(gallery);
+                        });
                     }
-                }
+                }   
+                data.Galleries = listOfGallery;
+                cn.Close();
             }
+
             using (SqlConnection cn = GetConnection())
             {
                 SqlCommand cmd = cn.CreateCommand();
@@ -294,20 +294,21 @@ namespace LiteCommerce.DataLayers.SQLServer
                 {
                     while (dbReader.Read())
                     {
-                        attribute = new ProductAttribute()
+                        listOfAttribute.Add(new ProductAttribute()
                         {
                             AttributeID = Convert.ToInt32(dbReader["AttributeID"]),
                             ProductID = Convert.ToInt32(dbReader["ProductID"]),
                             AttributeName = Convert.ToString(dbReader["AttributeName"]),
                             AttributeValue = Convert.ToString(dbReader["AttributeValue"]),
                             DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"])
-                        };
-                        listOfAttribute.Add(attribute);
+                        });
                     }
                 }
+
+                data.Attributes = listOfAttribute;
+                cn.Close();
             }
-            data.Attributes = listOfAttribute;
-            data.Galleries = listOfGallery;
+
             return data;
         }
         /// <summary>

@@ -71,7 +71,7 @@ namespace LiteCommerce.BusinessLayers
         {
             return ProductDB.UpdateAttribute(data);
         }
-        public static void DeleteAttribute(long[] attributeIds)
+        public static void DeleteAttributes(long[] attributeIds)
         {
             foreach (var id in attributeIds){
                 ProductDB.DeleteAttribute(id);

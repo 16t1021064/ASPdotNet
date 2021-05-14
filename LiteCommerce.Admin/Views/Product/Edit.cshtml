@@ -1,0 +1,58 @@
+﻿@model LiteCommerce.DomainModels.ProductEx
+@{
+    ViewBag.Title = "Cập nhật thông tin mặt hàng";
+}
+
+<fieldset>
+    <legend>Thông tin mặt hàng</legend>
+    <form>
+        @Html.TextBoxFor(m=> m.ProductName)
+        @*@Html.DropDownList(m => m.CategoyID , SelectListHelper.Categories())*@
+    </form>
+</fieldset>
+<fieldset>
+    <legend>Danh sách thuộc tính</legend>
+    <form action="~/Product/DeleteAttributes/@Model.ProductID" method="post">
+        <div class="row">
+            @foreach (var item in Model.Attributes)
+            {
+                <div class="form-group">
+                    <input type="checkbox" name="attributesIds[]" value="@item.AttributeID" />
+                    <label class="control-label col-md-6">Tên:</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static">@item.AttributeName</p>
+                    </div>
+
+                    <label class="control-label col-md-6">Giá trị:</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static">@item.AttributeValue</p>
+                    </div>
+
+                </div>
+            }
+        </div>
+            <button class="btn btn-danger" type="submit">Xóa thuộc tính</button>
+</form>
+</fieldset>
+<fieldset>
+    <legend>Danh sách ảnh</legend>
+    <form action="~/Product/DeleteGalleries/@Model.ProductID" method="post">
+        <div class="row">
+            @foreach (var item in Model.Galleries)
+            {
+                    <div class="col-md-3">
+                        
+                        <input type="checkbox" name="galleryIds[]" value="@item.GalleryID" />
+                        <img src="@item.Photo" />
+                        <label class="control-label col-md-6">Mô tả:</label>
+                        <div class="col-md-6">
+                            <p>@item.Description</p>
+                        </div>
+                        <br />
+                    </div>
+            }
+        </div>
+        <button class="btn btn-danger" type="submit">Xóa ảnh</button>
+    </form>
+
+</fieldset>
