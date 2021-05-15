@@ -6,8 +6,27 @@
 <fieldset>
     <legend>Thông tin mặt hàng</legend>
     <form>
-        @Html.TextBoxFor(m=> m.ProductName)
-        @*@Html.DropDownList(m => m.CategoyID , SelectListHelper.Categories())*@
+        <div class="form-group">
+            <label>Tên mặt hàng:</label>
+            @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control", @autofocus = "autofocus" })
+        </div>
+        <div class="form-group">
+            <label>Giá:</label>
+            @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <label>Ảnh:</label>
+            <img src="@Model.Photo"/>
+            @Html.TextBoxFor(m => m.Photo, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <label>Đơn vị tính:</label>
+            @Html.TextBoxFor(m => m.Unit, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <label>Đơn vị tính:</label>
+            @Html.TextBoxFor(m => m.Unit, new { @class = "form-control" })
+        </div>
     </form>
 </fieldset>
 <fieldset>
@@ -16,15 +35,15 @@
         <div class="row">
             @foreach (var item in Model.Attributes)
             {
+                <input type="checkbox" name="attributesIds[]" value="@item.AttributeID" />
                 <div class="form-group">
-                    <input type="checkbox" name="attributesIds[]" value="@item.AttributeID" />
-                    <label class="control-label col-md-6">Tên:</label>
-                    <div class="col-sm-6">
+                    <label class="control-label col-md-2">Tên:</label>
+                    <div class="col-md-10">
                         <p class="form-control-static">@item.AttributeName</p>
                     </div>
 
-                    <label class="control-label col-md-6">Giá trị:</label>
-                    <div class="col-sm-6">
+                    <label class="control-label col-md-2">Giá trị:</label>
+                    <div class="col-md-10">
                         <p class="form-control-static">@item.AttributeValue</p>
                     </div>
 

@@ -251,6 +251,9 @@ namespace LiteCommerce.DataLayers.SQLServer
             }
             return data;
         }
+
+        
+
         /// <summary>
         /// 
         /// </summary>
@@ -288,7 +291,9 @@ namespace LiteCommerce.DataLayers.SQLServer
             using (SqlConnection cn = GetConnection())
             {
                 SqlCommand cmd = cn.CreateCommand();
-                cmd.CommandText = @"Select * from ProductAttributes where ProductID = @productId";
+                cmd.CommandText = @"SELECT distinct  *
+                                        from Products
+                                        inner join ProductAttributes on Products.ProductID = ProductAttributes.ProductID";
                 cmd.Parameters.AddWithValue("@productId", productId);
                 using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
                 {
@@ -302,6 +307,12 @@ namespace LiteCommerce.DataLayers.SQLServer
                             AttributeValue = Convert.ToString(dbReader["AttributeValue"]),
                             DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"])
                         });
+                        data.CategoryID = Convert.ToInt32(dbReader["CategoryID"]);
+                        data.Photo = Convert.ToString(dbReader["Photo"]);
+                        data.Price = Convert.ToDecimal(dbReader["Price"]);
+                        data.SupplierID = Convert.ToInt32(dbReader["SupplierID"]);
+                        data.Unit = Convert.ToString(dbReader["Unit"]);
+                        data.ProductName = Convert.ToString(dbReader["ProductName"]);
                     }
                 }
 

@@ -15,7 +15,7 @@ namespace LiteCommerce.Admin
         public static List<SelectListItem> Countries()
         {
             List<SelectListItem> list = new List<SelectListItem>();
-            foreach(var item in DataService.ListCountries())
+            foreach (var item in DataService.ListCountries())
             {
                 list.Add(new SelectListItem()
                 {
@@ -37,6 +37,11 @@ namespace LiteCommerce.Admin
                 });
             }
             return list;
+        }
+        public static List<SelectListItem> Categories(int categoryID)
+        {
+            
+             
         }
     }
 }
