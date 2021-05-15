@@ -51,6 +51,12 @@ namespace LiteCommerce.BusinessLayers
         {
             return ProductDB.Update(data);
         }
+
+        public static List<Supplier> Suppliers()
+        {
+            return ProductDB.Suppliers();
+        }
+
         public static bool Delete(int productId)
         {
             return ProductDB.Delete(productId);
@@ -99,6 +105,14 @@ namespace LiteCommerce.BusinessLayers
             {
                 ProductDB.DeleteGallery(id);
             }
+        }
+        public static List<Category> Categories(int categoryID)
+        {
+            return ProductDB.Categories(categoryID);
+        }
+        public static List<Category> Categories()
+        {
+            return ProductDB.Categories();
         }
     }
 }

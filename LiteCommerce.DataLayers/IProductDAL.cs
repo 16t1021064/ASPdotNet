@@ -53,6 +53,8 @@ namespace LiteCommerce.DataLayers
         /// <param name="data"></param>
         /// <returns></returns>
         bool Delete(int productId);
+        List<Supplier> Suppliers();
+
         /// <summary>
         /// lấy danh sách cách thuộc tính của 1 product (sắp xếp theo displayorders)
         /// </summary>
@@ -102,6 +104,8 @@ namespace LiteCommerce.DataLayers
         /// <param name="data"></param>
         /// <returns></returns>
         bool UpdateGallery(ProductGallery data);
+        List<Category> Categories(int categoryID);
+        List<Category> Categories();
         /// <summary>
         /// 
         /// </summary>

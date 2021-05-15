@@ -291,9 +291,10 @@ namespace LiteCommerce.DataLayers.SQLServer
             using (SqlConnection cn = GetConnection())
             {
                 SqlCommand cmd = cn.CreateCommand();
-                cmd.CommandText = @"SELECT distinct  *
-                                        from Products
-                                        inner join ProductAttributes on Products.ProductID = ProductAttributes.ProductID";
+                cmd.CommandText = @"SELECT *
+		                            from Products
+                                        inner join ProductAttributes on Products.ProductID = ProductAttributes.ProductID 
+                                       Where Products.ProductID = @productId";
                 cmd.Parameters.AddWithValue("@productId", productId);
                 using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
                 {
@@ -570,6 +571,69 @@ namespace LiteCommerce.DataLayers.SQLServer
                 isUpdated = cmd.ExecuteNonQuery() > 0;
             }
             return isUpdated;
+        }
+        public List<Category> Categories()
+        {
+            return Categories(0);
+        }
+        public List<Category> Categories(int categoryID)
+        {
+            List<Category> data = new List<Category>();
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = @"select * from Categories 
+                                    where @categoryID = '' Or CategoryID = @categoryID";
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.Connection = cn;
+                cmd.Parameters.AddWithValue("@categoryID", categoryID);
+                using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    while (dbReader.Read())
+                    {
+                        data.Add(new Category()
+                        {
+                            CategoryID = Convert.ToInt32(dbReader["CategoryID"]),
+                            CategoryName = Convert.ToString(dbReader["CategoryName"])
+                        });
+                    }
+                }
+
+                cn.Close();
+            }
+
+            return data;
+        }
+        public List<Supplier> Suppliers()
+        {
+            return Suppliers(0);
+        }
+        public List<Supplier> Suppliers(int supplierID)
+        {
+            List<Supplier> data = new List<Supplier>();
+            using (SqlConnection cn = GetConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = @"select * from Suppliers 
+                                    where @supplierID = '' Or SupplierID = @supplierID";
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.Connection = cn;
+                cmd.Parameters.AddWithValue("@supplierID", supplierID);
+                using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    while (dbReader.Read())
+                    {
+                        data.Add(new Supplier()
+                        {
+                            SupplierID = Convert.ToInt32(dbReader["SupplierID"]),
+                            SupplierName = Convert.ToString(dbReader["SupplierName"])
+                        });
+                    }
+                }
+                cn.Close();
+            }
+
+            return data;
         }
     }
 }

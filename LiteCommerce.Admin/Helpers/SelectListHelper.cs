@@ -38,10 +38,44 @@ namespace LiteCommerce.Admin
             }
             return list;
         }
-        public static List<SelectListItem> Categories(int categoryID)
+        public static List<SelectListItem> Categories()
         {
-            
-             
+            List<SelectListItem> list = new List<SelectListItem>();
+            list.Add(new SelectListItem()
+            {
+                Value = "0",
+                Text = "====Tất cả loại hàng===="
+            });
+            foreach (var item in ProductService.Categories())
+            {
+                list.Add(new SelectListItem()
+                {
+                    Value = item.CategoryID.ToString(),
+                    Text = item.CategoryName
+                });
+            }
+            return list;
+
+        }
+        public static List<SelectListItem> Suppliers()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            list.Add(new SelectListItem()
+            {
+                Value = "0",
+                Text = "====Tất cả nhà cung cấp===="
+            });
+            foreach (var item in ProductService.Suppliers())
+            {
+                
+                list.Add(new SelectListItem()
+                {
+                    Value = item.SupplierID.ToString(),
+                    Text = item.SupplierName
+                });
+            }
+            return list;
+
         }
     }
 }

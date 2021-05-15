@@ -5,53 +5,76 @@
 
 <fieldset>
     <legend>Thông tin mặt hàng</legend>
-    <form>
+    <form form action="~/Product/Save/@Model.ProductID" method="post">
+        <div class="form-group">
+            @Html.ValidationSummary()
+        </div>
+        @Html.HiddenFor(m => m.ProductID)
         <div class="form-group">
             <label>Tên mặt hàng:</label>
             @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control", @autofocus = "autofocus" })
+            @Html.ValidationMessageFor(m => m.ProductName)
         </div>
         <div class="form-group">
             <label>Giá:</label>
             @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Price)
         </div>
         <div class="form-group">
             <label>Ảnh:</label>
-            <img src="@Model.Photo"/>
+            <img src="@Model.Photo" />
             @Html.TextBoxFor(m => m.Photo, new { @class = "form-control" })
         </div>
         <div class="form-group">
             <label>Đơn vị tính:</label>
             @Html.TextBoxFor(m => m.Unit, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Unit)
         </div>
         <div class="form-group">
-            <label>Đơn vị tính:</label>
-            @Html.TextBoxFor(m => m.Unit, new { @class = "form-control" })
+            <label>Loại hàng:</label>
+            @Html.DropDownListFor(m => m.CategoryID, SelectListHelper.Categories(), new { @class = "form-control" })
         </div>
+        <div class="form-group">
+            <label>Nhà cung cấp:</label>
+            @Html.DropDownListFor(m => m.SupplierID, SelectListHelper.Suppliers(), new { @class = "form-control" })
+        </div>
+        <button class="btn btn-primary" type="submit">Chỉnh sửa thông tin</button>
     </form>
 </fieldset>
 <fieldset>
     <legend>Danh sách thuộc tính</legend>
     <form action="~/Product/DeleteAttributes/@Model.ProductID" method="post">
-        <div class="row">
-            @foreach (var item in Model.Attributes)
-            {
-                <input type="checkbox" name="attributesIds[]" value="@item.AttributeID" />
+        @foreach (var item in Model.Attributes)
+        {
+            <div class="row">
+
                 <div class="form-group">
-                    <label class="control-label col-md-2">Tên:</label>
-                    <div class="col-md-10">
-                        <p class="form-control-static">@item.AttributeName</p>
+                    <div class="row">
+                        <div class="col-md-1">
+                            <input type="checkbox" name="attributesIds[]" value="@item.AttributeID" class="form-check-input" />
+                        </div>
+                        <div class="col-md-4">
+                            <label>Tên thuộc tính:</label>
+                        </div>
+                        <div class="col-md-7">
+                            <p class="text-left ">@item.AttributeName</p>
+                        </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4">
 
-                    <label class="control-label col-md-2">Giá trị:</label>
-                    <div class="col-md-10">
-                        <p class="form-control-static">@item.AttributeValue</p>
+                            <label>Giá trị:</label>
+                        </div>
+                        <div class="col-md-7">
+                            <p class="text-left ">@item.AttributeValue</p>
+                        </div>
                     </div>
-
                 </div>
-            }
-        </div>
-            <button class="btn btn-danger" type="submit">Xóa thuộc tính</button>
-</form>
+            </div>
+        }
+        <button class="btn btn-danger" type="submit">Xóa thuộc tính</button>
+    </form>
 </fieldset>
 <fieldset>
     <legend>Danh sách ảnh</legend>
@@ -59,16 +82,16 @@
         <div class="row">
             @foreach (var item in Model.Galleries)
             {
-                    <div class="col-md-3">
-                        
-                        <input type="checkbox" name="galleryIds[]" value="@item.GalleryID" />
-                        <img src="@item.Photo" />
-                        <label class="control-label col-md-6">Mô tả:</label>
-                        <div class="col-md-6">
-                            <p>@item.Description</p>
-                        </div>
-                        <br />
+                <div class="col-md-3">
+
+                    <input type="checkbox" name="galleryIds[]" value="@item.GalleryID" />
+                    <img src="@item.Photo" />
+                    <label class="control-label col-md-6">Mô tả:</label>
+                    <div class="col-md-6">
+                        <p>@item.Description</p>
                     </div>
+                    <br />
+                </div>
             }
         </div>
         <button class="btn btn-danger" type="submit">Xóa ảnh</button>
