@@ -39,7 +39,7 @@ namespace LiteCommerce.DataLayers.SQLServer
                 cmd.Parameters.AddWithValue("@ProductName", data.ProductName);
                 cmd.Parameters.AddWithValue("@SupplierID", data.SupplierID);
                 cmd.Parameters.AddWithValue("@CategoryID", data.CategoryID);
-                cmd.Parameters.AddWithValue("@City", data.Unit);
+                cmd.Parameters.AddWithValue("@Unit", data.Unit);
                 cmd.Parameters.AddWithValue("@Price", data.Price);
                 cmd.Parameters.AddWithValue("@Photo", data.Photo);
                 productID = Convert.ToInt32(cmd.ExecuteScalar());
@@ -140,6 +140,12 @@ namespace LiteCommerce.DataLayers.SQLServer
                 cmd.CommandText = @"delete from Products
                                     where ProductID = @productId
 	                                    AND not exists(
+	                                    select * from ProductGallery
+		                                    where ProductID = Products.ProductID
+	                                    )AND not exists(
+	                                    select * from ProductAttributes
+		                                    where ProductID = Products.ProductID
+	                                    )AND not exists(
 	                                    select * from OrderDetails
 		                                    where ProductID = Products.ProductID
 	                                    )";
@@ -314,6 +320,7 @@ namespace LiteCommerce.DataLayers.SQLServer
                         data.SupplierID = Convert.ToInt32(dbReader["SupplierID"]);
                         data.Unit = Convert.ToString(dbReader["Unit"]);
                         data.ProductName = Convert.ToString(dbReader["ProductName"]);
+                        data.ProductID = Convert.ToInt32(dbReader["ProductID"]);
                     }
                 }
 
@@ -502,7 +509,7 @@ namespace LiteCommerce.DataLayers.SQLServer
 	                                    CategoryID =@CategoryID,
 	                                    Unit = @Unit,
 	                                    Price = @Price,
-	                                    Photo = @Photo,
+	                                    Photo = @Photo
 	                                    Where ProductID = @ProductID
 	                                    ";
                 cmd.Parameters.AddWithValue("@ProductName", data.ProductName);
@@ -510,7 +517,7 @@ namespace LiteCommerce.DataLayers.SQLServer
                 cmd.Parameters.AddWithValue("@CategoryID", data.CategoryID);
                 cmd.Parameters.AddWithValue("@Unit", data.Unit);
                 cmd.Parameters.AddWithValue("@Price", data.Price);
-                cmd.Parameters.AddWithValue("@Phone", data.Photo);
+                cmd.Parameters.AddWithValue("@Photo", data.Photo);
                 cmd.Parameters.AddWithValue("@ProductID", data.ProductID);
                 isUpdated = cmd.ExecuteNonQuery() > 0;
             }

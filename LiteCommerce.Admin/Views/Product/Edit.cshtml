@@ -1,100 +1,140 @@
 ﻿@model LiteCommerce.DomainModels.ProductEx
+
 @{
-    ViewBag.Title = "Cập nhật thông tin mặt hàng";
 }
 
 <fieldset>
     <legend>Thông tin mặt hàng</legend>
-    <form form action="~/Product/Save/@Model.ProductID" method="post">
+    <form action="~/Product/Save" method="post">
         <div class="form-group">
             @Html.ValidationSummary()
         </div>
         @Html.HiddenFor(m => m.ProductID)
         <div class="form-group">
             <label>Tên mặt hàng:</label>
-            @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control", @autofocus = "autofocus" })
-            @Html.ValidationMessageFor(m => m.ProductName)
+            @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control " })
         </div>
-        <div class="form-group">
-            <label>Giá:</label>
-            @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.Price)
-        </div>
-        <div class="form-group">
-            <label>Ảnh:</label>
-            <img src="@Model.Photo" />
-            @Html.TextBoxFor(m => m.Photo, new { @class = "form-control" })
-        </div>
-        <div class="form-group">
-            <label>Đơn vị tính:</label>
-            @Html.TextBoxFor(m => m.Unit, new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.Unit)
-        </div>
-        <div class="form-group">
-            <label>Loại hàng:</label>
-            @Html.DropDownListFor(m => m.CategoryID, SelectListHelper.Categories(), new { @class = "form-control" })
-        </div>
-        <div class="form-group">
-            <label>Nhà cung cấp:</label>
-            @Html.DropDownListFor(m => m.SupplierID, SelectListHelper.Suppliers(), new { @class = "form-control" })
-        </div>
-        <button class="btn btn-primary" type="submit">Chỉnh sửa thông tin</button>
-    </form>
-</fieldset>
-<fieldset>
-    <legend>Danh sách thuộc tính</legend>
-    <form action="~/Product/DeleteAttributes/@Model.ProductID" method="post">
-        @foreach (var item in Model.Attributes)
-        {
-            <div class="row">
-
+        <div class="row">
+            <div class="col-md-6">
                 <div class="form-group">
-                    <div class="row">
-                        <div class="col-md-1">
-                            <input type="checkbox" name="attributesIds[]" value="@item.AttributeID" class="form-check-input" />
-                        </div>
-                        <div class="col-md-4">
-                            <label>Tên thuộc tính:</label>
-                        </div>
-                        <div class="col-md-7">
-                            <p class="text-left ">@item.AttributeName</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-1"></div>
-                        <div class="col-md-4">
-
-                            <label>Giá trị:</label>
-                        </div>
-                        <div class="col-md-7">
-                            <p class="text-left ">@item.AttributeValue</p>
-                        </div>
-                    </div>
+                    <label>Loại hàng:</label>
+                    @Html.DropDownListFor(m => m.CategoryID, SelectListHelper.Categories(), new { @class = "form-control" })
                 </div>
             </div>
-        }
-        <button class="btn btn-danger" type="submit">Xóa thuộc tính</button>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Nhà cung cấp:</label>
+                    @Html.DropDownListFor(m => m.SupplierID, SelectListHelper.Suppliers(), new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Đơn vị tính:</label>
+                    @Html.TextBoxFor(m => m.Unit, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Giá:</label>
+                    @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>File ảnh đại diện:</label>
+            @Html.TextBoxFor(m => m.Photo, new { @class = " form-control" })
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-save"></i> Lưu dữ liệu
+                </button>
+            </div>
+            <div class="col-md-6 text-right">
+                <a href="~/Product/Index" class="btn btn-warning">
+                    <i class="fa fa-window-close"></i> Bỏ qua
+                </a>
+            </div>
+        </div>
+    </form>
+</fieldset>
+
+<fieldset>
+    <legend>Danh sách thuộc tính</legend>
+    <form action="~/Products/DeleteAttributes/@Model.ProductID" method="post">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="width:20px">
+                        <button type="submit" class="btn btn-xs btn-danger">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                    </th>
+                    <th>Tên thuộc tính</th>
+                    <th>Giá trị</th>
+                    <th>
+                        <a href="~/Product/AddAttribute" class="btn btn-xs btn-primary">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Attributes)
+                {
+                    <tr>
+                        <td><input type="checkbox" name="attributeIds" value="@item.AttributeID" /></td>
+                        <td>@item.AttributeName</td>
+                        <td>@item.AttributeValue</td>
+                        <td>
+                            <a href="~/Product/EditAttribute/@item.AttributeID" class="btn btn-xs btn-default"> <i class="fa fa-edit"></i></a>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
     </form>
 </fieldset>
 <fieldset>
     <legend>Danh sách ảnh</legend>
     <form action="~/Product/DeleteGalleries/@Model.ProductID" method="post">
-        <div class="row">
-            @foreach (var item in Model.Galleries)
-            {
-                <div class="col-md-3">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="width:20px">
+                        <button type="submit" class="btn btn-xs btn-danger">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                    </th>
+                    <th>Ảnh</th>
+                    <th>Mô tả</th>
+                    <th>Trạng thái</th>
+                    <th>
+                        <a href="~/Product/AddGallery" class="btn btn-xs btn-primary">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Galleries)
+                {
+                    <tr>
+                        <td><input type="checkbox" name="attributeIds" value="@item.GalleryID" /></td>
+                        <td><img src="@item.Photo" style="height:50px"></td>
+                        <td>@item.Description</td>
+                        <td>@item.IsHidden</td>
+                        <td>
+                            <a href="~/Product/EditGallery/@item.GalleryID" class="btn btn-xs btn-default"> <i class="fa fa-edit"></i></a>
+                        </td>
 
-                    <input type="checkbox" name="galleryIds[]" value="@item.GalleryID" />
-                    <img src="@item.Photo" />
-                    <label class="control-label col-md-6">Mô tả:</label>
-                    <div class="col-md-6">
-                        <p>@item.Description</p>
-                    </div>
-                    <br />
-                </div>
-            }
-        </div>
-        <button class="btn btn-danger" type="submit">Xóa ảnh</button>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </form>
 
 </fieldset>
