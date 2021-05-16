@@ -63,7 +63,7 @@
 
 <fieldset>
     <legend>Danh sách thuộc tính</legend>
-    <form action="~/Products/DeleteAttributes/@Model.ProductID" method="post">
+    <form action="~/Product/DeleteAttributes/@Model.ProductID" method="post">
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -75,7 +75,7 @@
                     <th>Tên thuộc tính</th>
                     <th>Giá trị</th>
                     <th>
-                        <a href="~/Product/AddAttribute" class="btn btn-xs btn-primary">
+                        <a href="~/Product/AddAttribute?productID=@Model.ProductID" class="btn btn-xs btn-primary">
                             <i class="fa fa-plus"></i>
                         </a>
                     </th>
@@ -126,7 +126,14 @@
                         <td><input type="checkbox" name="attributeIds" value="@item.GalleryID" /></td>
                         <td><img src="@item.Photo" style="height:50px"></td>
                         <td>@item.Description</td>
-                        <td>@item.IsHidden</td>
+                        @if (@item.IsHidden == false)
+                        {
+                            <td>Ẩn</td>
+                        }
+                        else
+                        {
+                            <td>Hiện</td>
+                        }
                         <td>
                             <a href="~/Product/EditGallery/@item.GalleryID" class="btn btn-xs btn-default"> <i class="fa fa-edit"></i></a>
                         </td>

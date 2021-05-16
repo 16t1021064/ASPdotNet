@@ -53,11 +53,28 @@ namespace LiteCommerce.Admin.Controllers
         public ActionResult Add()
         {
             ViewBag.title = "Thêm sản phẩm";
-            ProductEx model = new ProductEx()
+            Product model = new Product()
             {
                 ProductID = 0
             };
             return View("Add", model);
+        }
+        public ActionResult Delete(int id)
+        {
+            if (Request.HttpMethod == "POST")
+            {
+                ProductService.Delete(id);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                var model = ProductService.Get(id);
+                if (model == null)
+                {
+                    return RedirectToAction("Index");
+                }
+                return View(model);
+            }
         }
         public ActionResult Save(Product data)
         {
@@ -106,6 +123,58 @@ namespace LiteCommerce.Admin.Controllers
             }
             return RedirectToAction("Index");
         }
+        public ActionResult AddAttribute(int productID)
+        {
+            ViewBag.title = "Thêm thuộc tính sản phẩm";
+            var model = new ProductAttribute()
+            {
+                AttributeID = 0,
+                ProductID = productID
+            };
+            return View("EditAttribute", model);
+        }
+        public ActionResult EditAttribute(int id)
+        {
+            ViewBag.title = "Sửa thông tin thuộc tính";
+            var model = ProductService.GetAttribute(id);
+            if (model == null)
+                return RedirectToAction("Index");
+            return View(model);
+        }
+        public ActionResult SaveAttribute(ProductAttribute data)
+        {
+            if (string.IsNullOrWhiteSpace(data.AttributeName))
+            {
+                ModelState.AddModelError("AttributeName", "Vui lòng nhập tên thuộc tính");
+            }
+            if (string.IsNullOrWhiteSpace(data.AttributeValue))
+            {
+                ModelState.AddModelError("AttributeValue", "Vui lòng nhập giá trị thuộc tính");
+            }
+            if (string.IsNullOrEmpty(data.DisplayOrder.ToString()))
+            {
+                data.DisplayOrder = 0;
+            }
+            if (!ModelState.IsValid)
+            {
+                if (data.AttributeID == 0)
+                    ViewBag.Title = "Thêm thuộc tính sản phẩm";
+                else
+                    ViewBag.Title = "Sửa thông tin thuộc tính";
+                return View("EditAttribute", data);
+            }
+
+            return Json(data);
+            if (data.AttributeID == 0)
+            {
+                ProductService.AddAttribute(data);
+            }
+            else
+            {
+                ProductService.UpdateAttribute(data);
+            }
+            return RedirectToAction("Edit",new { id = data.ProductID});
+        }
         public ActionResult DeleteAttributes(int id, long[] attributeIds )
         {
             if (attributeIds == null)
@@ -114,6 +183,18 @@ namespace LiteCommerce.Admin.Controllers
             }
             ProductService.DeleteAttributes(attributeIds);
             return RedirectToAction("Edit", new { id = id });
+        }
+        public ActionResult AddGallery()
+        {
+            return View();
+        }
+        public ActionResult EditGallery()
+        {
+            return View();
+        }
+        public ActionResult SaveGallery()
+        {
+            return View();
         }
         public ActionResult DeleteGalleries(int id, long[] galleryIds)
         {
@@ -124,22 +205,6 @@ namespace LiteCommerce.Admin.Controllers
             ProductService.DeleteGallery(galleryIds);
             return RedirectToAction("Edit", new { id = id });
         }
-        public ActionResult Delete(int id)
-        {
-            if (Request.HttpMethod == "POST")
-            {
-                ProductService.Delete(id);
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                var model = ProductService.Get(id);
-                if (model == null)
-                {
-                    return RedirectToAction("Index");
-                }
-                return View(model);
-            }
-        }
+       
     }
 }

@@ -59,9 +59,9 @@ namespace LiteCommerce.DataLayers.SQLServer
             {
                 SqlCommand cmd = cn.CreateCommand();
                 cmd.CommandText = @"insert into ProductAttributes(
-	                                AttributeName, AttributeValue, AttributeValue, DisplayOrder 
+	                                AttributeName,ProductID, AttributeValue, DisplayOrder 
                                     ) values(
-	                                @AttributeName, @AttributeValue, @AttributeValue, @DisplayOrder
+	                                @AttributeName,@ProductID, @AttributeValue, @DisplayOrder
                                              );
                                 Select @@IDENTITY;";
                 cmd.Parameters.AddWithValue("@AttributeName", data.AttributeName);
